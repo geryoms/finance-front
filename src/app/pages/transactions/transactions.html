@@ -1,0 +1,170 @@
+<div class="container mt-4">
+  <div class="row g-4">
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 sticky-top" style="top: 20px; z-index: 10;">
+        
+        <div class="card-header py-3" 
+             [class.bg-warning]="isEditing" [class.bg-opacity-10]="isEditing" [class.text-warning]="isEditing"
+             [class.bg-primary]="!isEditing" [class.bg-opacity-10]="!isEditing" [class.text-primary]="!isEditing">
+          <h5 class="mb-0 fw-bold">
+            @if (isEditing) { ✏️ Editando Movimiento } @else { ➕ Registrar Nuevo }
+          </h5>
+        </div>
+
+        <div class="card-body">
+          <form (ngSubmit)="saveTransaction()">
+            
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-muted">TIPO</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="type" id="typeInc" value="INGRESO" [(ngModel)]="formData.type">
+                <label class="btn" [class.btn-success]="formData.type === 'INGRESO'" [class.btn-outline-success]="formData.type !== 'INGRESO'" for="typeInc">Ingreso</label>
+
+                <input type="radio" class="btn-check" name="type" id="typeExp" value="GASTO" [(ngModel)]="formData.type">
+                <label class="btn" [class.btn-danger]="formData.type === 'GASTO'" [class.btn-outline-danger]="formData.type !== 'GASTO'" for="typeExp">Gasto</label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Descripción</label>
+              <input type="text" class="form-control" [(ngModel)]="formData.description" name="desc" placeholder="Ej: Supermercado, Nómina..." required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label">Monto</label>
+                <div class="input-group">
+                  <span class="input-group-text">€</span>
+                  <input type="number" class="form-control" [(ngModel)]="formData.amount" name="amount" required min="0.01" step="0.01">
+                </div>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Fecha</label>
+                <input type="date" class="form-control" [(ngModel)]="formData.date" name="date" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Cuenta</label>
+              <select class="form-select" [(ngModel)]="formData.accountId" name="acc" required>
+                @for (acc of accounts(); track acc.id) {
+                  <option [value]="acc.id">
+                    {{ acc.name }} ({{ acc.currentBalance | currency:'EUR' }})
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Categoría</label>
+              <select class="form-select" [(ngModel)]="formData.categoryId" name="cat">
+                <option [ngValue]="null" class="text-muted">-- Sin categoría --</option>
+                @for (cat of categories(); track cat.id) {
+                  <option [value]="cat.id">
+                    {{ cat.name }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn fw-bold" [class.btn-warning]="isEditing" [class.text-dark]="isEditing" [class.btn-primary]="!isEditing">
+                {{ isEditing ? 'Actualizar Cambios' : 'Guardar Movimiento' }}
+              </button>
+              
+              @if (isEditing) {
+                <button type="button" (click)="resetForm()" class="btn btn-outline-secondary">
+                  Cancelar Edición
+                </button>
+              }
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 fw-bold text-secondary">
+            @if (filterAccountId()) {
+              <span>🔍 Filtrado por Cuenta</span>
+            } @else {
+              <span>Historial Global</span>
+            }
+          </h5>
+          
+          @if (filterAccountId()) {
+            <button (click)="clearFilter()" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+              <span>❌ Ver Todas</span>
+            </button>
+          }
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-4">Fecha</th>
+                  <th>Concepto</th>
+                  <th>Cuenta</th>
+                  <th class="text-end">Monto</th>
+                  <th class="text-end pe-4">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                @for (tx of filteredTransactions(); track tx.id) {
+                  <tr>
+                    <td class="ps-4 text-muted small" style="white-space: nowrap;">
+                      {{ tx.date | date:'dd MMM yyyy' }}
+                    </td>
+                    
+                    <td>
+                      <div class="fw-bold text-dark">{{ tx.description }}</div>
+                      @if (tx.category) {
+                        <span class="badge rounded-pill bg-light text-dark border mt-1 fw-normal">
+                          🏷️ {{ tx.category.name }}
+                        </span>
+                      }
+                    </td>
+
+                    <td>
+                      <small class="text-secondary">{{ tx.account.name || 'Sin cuenta' }}</small>
+                    </td>
+
+                    <td class="text-end fw-bold" [class.text-success]="tx.type === 'INGRESO'" [class.text-danger]="tx.type === 'GASTO'">
+                      {{ tx.type === 'GASTO' ? '-' : '+' }} {{ tx.amount | currency:'EUR' }}
+                    </td>
+
+                    <td class="text-end pe-4">
+                      <button class="btn btn-sm btn-light text-primary me-2" (click)="editTransaction(tx)" title="Editar">
+                        ✏️
+                      </button>
+                      <button class="btn btn-sm btn-light text-danger" (click)="deleteTransaction(tx.id!)" title="Borrar">
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                      <div class="fs-1 mb-2">📭</div>
+                      <p class="mb-0">No hay movimientos para mostrar.</p>
+                    </td>
+                  </tr>
+                }
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

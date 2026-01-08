@@ -1,0 +1,125 @@
+<div class="container mt-4">
+  <div class="row g-4">
+    
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 sticky-top" style="top: 20px; z-index: 1;">
+        <div class="card-header bg-primary bg-opacity-10 text-primary py-3">
+          <h5 class="mb-0 fw-bold">📺 Nueva Suscripción</h5>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="create()">
+            
+            <div class="mb-3">
+              <label class="form-label">Servicio</label>
+              <input type="text" class="form-control" [(ngModel)]="newSub.name" name="name" placeholder="Ej: Netflix, Gym..." required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label">Precio</label>
+                <div class="input-group">
+                  <span class="input-group-text">€</span>
+                  <input type="number" class="form-control" [(ngModel)]="newSub.amount" name="amount" required>
+                </div>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Frecuencia</label>
+                <select class="form-select" [(ngModel)]="newSub.frequency" name="freq">
+                  <option value="MONTHLY">Mensual</option>
+                  <option value="YEARLY">Anual</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Primer Pago / Inicio</label>
+              <input type="date" class="form-control" [(ngModel)]="newSub.startDate" name="date">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Cuenta de Cargo</label>
+              <select class="form-select" [(ngModel)]="newSub.accountId" name="acc">
+                @for (acc of accounts(); track acc.id) {
+                  <option [value]="acc.id">{{ acc.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Categoría</label>
+              <select class="form-select" [(ngModel)]="newSub.categoryId" name="cat">
+                <option [ngValue]="null">-- Sin categoría --</option>
+                @for (cat of categories(); track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                } 
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-bold">Activar Pago Automático</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <h4 class="text-secondary mb-3">Tus Gastos Fijos</h4>
+      
+      <div class="row g-3">
+        
+@for (sub of subscriptions(); track sub.id) {
+          
+          <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0 position-relative" style="overflow: hidden;">
+              
+              <div class="position-absolute start-0 top-0 bottom-0" 
+                   [class.bg-info]="sub.frequency === 'MONTHLY'"
+                   [class.bg-warning]="sub.frequency === 'YEARLY'"
+                   style="width: 5px;"></div>
+              
+              <div class="card-body ps-4">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h5 class="fw-bold mb-1">{{ sub.name }}</h5>
+                    <span class="badge bg-light text-dark border">
+                      {{ sub.category?.name || 'General' }}
+                    </span>
+                  </div>
+                  <h4 class="fw-bold text-danger mb-0">-{{ sub.amount | currency:'EUR' }}</h4>
+                </div>
+                
+                <hr class="my-3 opacity-25">
+                
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <small class="text-muted d-block">Próximo cobro:</small>
+                    <span class="fw-bold" [class.text-danger]="getDaysRemaining(sub.nextPaymentDate) < 3">
+                      📅 {{ sub.nextPaymentDate | date:'dd MMM yyyy' }}
+                    </span>
+                  </div>
+                  
+                  <button (click)="delete(sub.id!)" class="btn btn-outline-danger btn-sm">
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+              
+              <div class="card-footer bg-light py-1 ps-4 border-0">
+                <small class="text-muted">
+                  {{ sub.frequency === 'MONTHLY' ? 'Mensual' : 'Anual' }} • {{ sub.account?.name }}
+                </small>
+              </div>
+            </div>
+          </div>
+
+        } @empty {
+          <div class="col-12">
+            <div class="alert alert-light text-center border-dashed py-5">
+              <div class="fs-1">🧘‍♂️</div>
+              <p class="mb-0">¡Qué paz! No tienes gastos fijos registrados.</p>
+            </div>
+          </div>
+        } </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,5 @@
+/* transactions.component.css */
+/* Solo esto, Bootstrap hace el resto */
+.sticky-top {
+    z-index: 10;
+}

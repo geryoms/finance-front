@@ -1,0 +1,34 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>💳 Mis Cuentas</h2>
+    </div>
+
+  <div class="card p-3 mb-4 bg-light border-0">
+    <form (ngSubmit)="create()" class="row g-2 align-items-center">
+      <div class="col-auto"><input [(ngModel)]="newAccount.name" name="name" placeholder="Nombre (ej: Banco X)" class="form-control"></div>
+      <div class="col-auto"><input [(ngModel)]="newAccount.currentBalance" name="bal" type="number" placeholder="Saldo Inicial" class="form-control"></div>
+      <div class="col-auto"><button type="submit" class="btn btn-primary">Crear</button></div>
+    </form>
+  </div>
+
+  <div class="row g-4">
+    @for (acc of accounts(); track acc.id) {
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <h5 class="card-title fw-bold">{{ acc.name }}</h5>
+              <button class="btn btn-sm text-danger" (click)="delete(acc.id!)">✕</button>
+            </div>
+            <h3 class="text-primary mt-3">{{ acc.currentBalance | currency:'EUR' }}</h3>
+            <small class="text-muted">Saldo actual disponible</small>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="col-12 text-center py-5 text-muted">
+        No tienes cuentas creadas.
+      </div>
+    }
+  </div>
+</div>

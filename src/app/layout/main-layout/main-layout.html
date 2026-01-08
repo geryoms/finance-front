@@ -1,0 +1,19 @@
+<div class="app-container">
+  <nav class="sidebar">
+    <div class="logo">MyFinance</div>
+    <ul>
+      <li><a routerLink="/dashboard" routerLinkActive="active">📊 Dashboard</a></li>
+      <li><a routerLink="/accounts" routerLinkActive="active">💳 Cuentas</a></li>
+      <li><a routerLink="/transactions" routerLinkActive="active">💸 Movimientos</a></li>
+      
+      <li><a routerLink="/categories" routerLinkActive="active">🏷️ Categorías</a></li>
+      <li><a routerLink="/subscriptions" routerLinkActive="active">📅 Suscripciones</a></li>
+      <li><a routerLink="/goals" routerLinkActive="active">🎯 Metas</a></li>
+    </ul>
+    <button (click)="logout()" class="logout-btn">Cerrar Sesión</button>
+  </nav>
+
+  <main class="content">
+    <router-outlet></router-outlet> 
+  </main>
+</div>

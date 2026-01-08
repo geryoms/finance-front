@@ -1,1 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+.account-card:hover {
+    transform: translateY(-5px);
+    background-color: #f8f9fa;
+    border: 1px solid #3498db !important; /* Borde azul sutil */
+}

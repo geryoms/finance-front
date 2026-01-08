@@ -1,0 +1,9 @@
+/* dashboard.component.css */
+/* Ya no necesitamos grids manuales, Bootstrap se encarga de todo */
+
+.chart-container {
+    /* Asegura que el canvas no crezca infinitamente */
+    position: relative; 
+    width: 100%;
+    overflow: hidden;
+}
