@@ -1,32 +1,48 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>💳 Mis Cuentas</h2>
-    </div>
+  <h2 class="mb-4 fw-bold">💳 Mis Cuentas</h2>
 
-  <div class="card p-3 mb-4 bg-light border-0">
-    <form (ngSubmit)="create()" class="row g-2 align-items-center">
-      <div class="col-auto"><input [(ngModel)]="newAccount.name" name="name" placeholder="Nombre (ej: Banco X)" class="form-control"></div>
-      <div class="col-auto"><input [(ngModel)]="newAccount.currentBalance" name="bal" type="number" placeholder="Saldo Inicial" class="form-control"></div>
-      <div class="col-auto"><button type="submit" class="btn btn-primary">Crear</button></div>
+  <div class="neo-card mb-5">
+    <h5 class="mb-3">Nueva Cuenta</h5>
+    <form (ngSubmit)="create()" class="row g-3 align-items-center">
+      
+      <div class="col-md-5">
+        <div class="neo-form-group mb-0"> <input required [(ngModel)]="newAccount.name" name="name" class="neo-input">
+          <label class="label">Nombre (ej: Banco X)</label>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="neo-form-group mb-0">
+          <input required type="number" [(ngModel)]="newAccount().initialBalance" name="bal" class="neo-input">
+          <label class="label">Saldo Inicial</label>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100" style="height: 45px;">Crear</button>
+      </div>
     </form>
   </div>
 
   <div class="row g-4">
     @for (acc of accounts(); track acc.id) {
       <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <h5 class="card-title fw-bold">{{ acc.name }}</h5>
-              <button class="btn btn-sm text-danger" (click)="delete(acc.id!)">✕</button>
-            </div>
-            <h3 class="text-primary mt-3">{{ acc.currentBalance | currency:'EUR' }}</h3>
-            <small class="text-muted">Saldo actual disponible</small>
+        <div class="neo-card h-100 position-relative">
+          
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="fw-bold mb-0">{{ acc.name }}</h5>
+            <button class="btn btn-sm btn-outline-danger border-0" (click)="delete(acc.id!)">✕</button>
           </div>
+          
+          <div class="mt-4 text-center">
+            <h3 class="text-primary fw-bold mb-0">{{ acc.currentBalance | currency:'EUR' }}</h3>
+            <small class="text-muted">Saldo Disponible</small>
+          </div>
+
         </div>
       </div>
     } @empty {
-      <div class="col-12 text-center py-5 text-muted">
+      <div class="col-12 text-center py-5 text-muted-dynamic">
         No tienes cuentas creadas.
       </div>
     }

@@ -1,103 +1,73 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Account, Category, SubscriptionModel } from '../../models/api.models';
 import { ApiService } from '../../services/api';
+import { SubscriptionModel, Account, Category } from '../../models/api.models';
 
 @Component({
   selector: 'app-subscriptions',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './subscriptions.html',
-  styles: []
+  templateUrl: './subscriptions.html'
 })
 export class SubscriptionsComponent implements OnInit {
-  
+  private api = inject(ApiService);
+
   subscriptions = signal<SubscriptionModel[]>([]);
   accounts = signal<Account[]>([]);
   categories = signal<Category[]>([]);
 
-  newSub: any = {
+  newSub = signal<any>({
     name: '',
-    amount: null,
+    amount: 0,
     frequency: 'MONTHLY',
     startDate: new Date().toISOString().split('T')[0],
     accountId: null,
     categoryId: null
-  };
-
-  constructor(private api: ApiService) {}
+  });
 
   ngOnInit() {
     this.loadData();
   }
 
   loadData() {
-    this.api.getSubscriptions().subscribe(data => {
-      this.subscriptions.set(data);
-    });
-
-    this.api.getAccounts().subscribe(data => {
-      this.accounts.set(data);
-      if (data.length > 0 && !this.newSub.accountId) {
-        this.newSub.accountId = data[0].id;
-      }
-    });
-
-    this.api.getCategories().subscribe(data => {
-      this.categories.set(data);
-    });
+    this.api.getSubscriptions().subscribe(res => this.subscriptions.set(res));
+    this.api.getAccounts().subscribe(res => this.accounts.set(res));
+    this.api.getCategories().subscribe(res => this.categories.set(res));
   }
 
   create() {
-    if (!this.newSub.name || !this.newSub.amount || !this.newSub.accountId) {
-      alert('Por favor, rellena nombre, monto y cuenta.');
-      return;
-    }
+    const data = this.newSub();
+    if (!data.accountId) return alert('Selecciona cuenta');
 
-    const payload: SubscriptionModel = {
-      name: this.newSub.name,
-      amount: this.newSub.amount,
-      frequency: this.newSub.frequency,
-      startDate: this.newSub.startDate,
-      account: { id: Number(this.newSub.accountId) },
-      category: this.newSub.categoryId ? { id: Number(this.newSub.categoryId) } : undefined
-    };
-
-    this.api.createSubscription(payload).subscribe({
-      next: () => {
-        this.loadData(); 
-        
-        alert('Suscripción creada correctamente.');
-        
-        this.newSub.name = '';
-        this.newSub.amount = null;
-        this.newSub.categoryId = null;
-      },
-      error: (err) => {
-        console.error('Error creando suscripción:', err);
-        alert('Hubo un error al crear la suscripción.');
-      }
+    this.api.createSubscription(data).subscribe(() => {
+        this.loadData();
+        // Reset form
+        this.newSub.set({
+            name: '',
+            amount: 0,
+            frequency: 'MONTHLY',
+            startDate: new Date().toISOString().split('T')[0],
+            accountId: this.accounts()[0]?.id, // Mantener una cuenta por defecto
+            categoryId: null
+        });
     });
   }
 
   delete(id: number) {
-    if(confirm('¿Seguro que quieres cancelar esta suscripción?')) {
-      this.api.deleteSubscription(id).subscribe(() => {
-        this.subscriptions.update(current => current.filter(s => s.id !== id));
-      });
+    if(confirm('¿Cancelar suscripción?')) {
+        this.api.deleteSubscription(id).subscribe(() => {
+            this.subscriptions.update(list => list.filter(s => s.id !== id));
+        });
     }
   }
 
+  // Helper para calcular días (puedes usarlo en el template)
   getDaysRemaining(dateStr?: string): number {
     if(!dateStr) return 0;
+    const payment = new Date(dateStr);
     const today = new Date();
-    today.setHours(0,0,0,0);
-    
-    const next = new Date(dateStr);
-    next.setHours(0,0,0,0);
-    
-    const diffTime = next.getTime() - today.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    const diff = payment.getTime() - today.getTime();
+    return Math.ceil(diff / (1000 * 3600 * 24));
   }
 }

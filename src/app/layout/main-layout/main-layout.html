@@ -1,19 +1,49 @@
-<div class="app-container">
-  <nav class="sidebar">
-    <div class="logo">MyFinance</div>
-    <ul>
-      <li><a routerLink="/dashboard" routerLinkActive="active">📊 Dashboard</a></li>
-      <li><a routerLink="/accounts" routerLinkActive="active">💳 Cuentas</a></li>
-      <li><a routerLink="/transactions" routerLinkActive="active">💸 Movimientos</a></li>
-      
-      <li><a routerLink="/categories" routerLinkActive="active">🏷️ Categorías</a></li>
-      <li><a routerLink="/subscriptions" routerLinkActive="active">📅 Suscripciones</a></li>
-      <li><a routerLink="/goals" routerLinkActive="active">🎯 Metas</a></li>
-    </ul>
-    <button (click)="logout()" class="logout-btn">Cerrar Sesión</button>
-  </nav>
+<div class="d-flex h-100">
+    
+    <nav class="neo-sidebar p-3 d-flex flex-column" style="width: 260px; min-height: 100vh;">
+        
+        <a routerLink="/dashboard" class="mb-5 mt-2 text-decoration-none text-center d-block">
+            <h4 class="fw-bold" style="color: var(--text-color); letter-spacing: 1px;">
+                💰 MyFinance
+            </h4>
+        </a>
+        
+        <div class="d-flex flex-column px-2">
+            
+            <a routerLink="/dashboard" routerLinkActive="active" class="neo-nav-link">
+                <span>📊</span> <span>Dashboard</span>
+            </a>
 
-  <main class="content">
-    <router-outlet></router-outlet> 
-  </main>
+            <a routerLink="/accounts" routerLinkActive="active" class="neo-nav-link">
+                <span>💳</span> <span>Cuentas</span>
+            </a>
+
+            <a routerLink="/transactions" routerLinkActive="active" class="neo-nav-link">
+                <span>💸</span> <span>Movimientos</span>
+            </a>
+
+            <a routerLink="/subscriptions" routerLinkActive="active" class="neo-nav-link">
+                <span>📺</span> <span>Suscripciones</span>
+            </a>
+
+        </div>
+
+        <div class="mt-auto pt-4 border-top" style="border-color: var(--card-border) !important;">
+            
+            <button class="neo-nav-link w-100 border-0 bg-transparent" 
+                    (click)="themeService.toggleTheme()">
+               <span>{{ themeService.currentTheme() === 'light' ? '🌙' : '☀️' }}</span>
+               <span>{{ themeService.currentTheme() === 'light' ? 'Modo Oscuro' : 'Modo Claro' }}</span>
+            </button>
+
+            <button class="neo-nav-link w-100 border-0 bg-transparent text-danger mt-1" 
+                    (click)="logout()">
+                <span>🚪</span> <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow-1 overflow-auto" style="background-color: var(--bg-color);">
+        <router-outlet></router-outlet>
+    </main>
 </div>

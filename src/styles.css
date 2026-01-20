@@ -1,6 +1,200 @@
-/* You can add global styles to this file, and also import other style files */
-.account-card:hover {
-    transform: translateY(-5px);
-    background-color: #f8f9fa;
-    border: 1px solid #3498db !important; /* Borde azul sutil */
+:root {
+  --bg-color: #e0e5ec;
+  --text-color: #4d4d4d;
+  --card-bg: #e0e5ec;
+  --shadow-outer: 7px 7px 14px #bec3c9, 
+                  -7px -7px 14px #ffffff;
+    --card-border: 1px solid rgba(255,255,255, 0.4);
+}
+
+[data-theme="dark"] {
+  --bg-color: #2b2b2b;
+  --text-color: #e0e0e0;
+  --card-bg: #2b2b2b;
+  
+  
+  --shadow-outer: 5px 5px 10px rgba(0, 0, 0, 0.3), 
+                  -4px -4px 8px rgba(255, 255, 255, 0.03);
+                  
+  --card-border: 1px solid rgba(255, 255, 255, 0.05); 
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.neo-card {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-radius: 20px;
+  border: var(--card-border);
+  box-shadow: var(--shadow-outer);
+  padding: 25px;
+  height: 100%;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.neo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 12px rgba(0,0,0,0.35), 
+              -5px -5px 10px rgba(255,255,255, 0.04);
+}
+
+/*INPUTS Y FORMULARIOS*/
+.neo-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  position: relative;
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+.neo-form-group .label {
+  font-size: 15px;
+  padding-left: 10px;
+  position: absolute;
+  top: 13px;
+  transition: 0.3s;
+  pointer-events: none;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.neo-input {
+  width: 100%;
+  height: 45px;
+  border: none;
+  outline: none;
+  padding: 0px 15px;
+  border-radius: 6px;
+  color: var(--text-color);
+  font-size: 15px;
+  background-color: transparent;
+  box-shadow: var(--shadow-outer);
+  transition: 0.3s;
+}
+
+.neo-input:focus {
+  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.2), 
+              inset -3px -3px 6px rgba(255,255,255,0.05);
+}
+
+.neo-form-group .neo-input:valid ~ .label,
+.neo-form-group .neo-input:focus ~ .label {
+  transition: 0.3s;
+  padding-left: 2px;
+  transform: translateY(-35px);
+  font-size: 0.9em;
+  opacity: 1;
+}
+
+select.neo-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 1em;
+  cursor: pointer;
+}
+[data-theme="dark"] select.neo-input {
+  filter: invert(1);
+}
+
+/*SIDEBAR Y NAV*/
+.neo-sidebar, .neo-sidebar a, .neo-nav-link {
+    color: #4d4d4d !important;
+}
+[data-theme="dark"] .neo-sidebar, 
+[data-theme="dark"] .neo-sidebar a, 
+[data-theme="dark"] .neo-nav-link {
+    color: #e0e0e0 !important; 
+}
+
+.neo-sidebar {
+  background-color: var(--bg-color);
+  border-right: var(--card-border);
+  height: 100vh;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.neo-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.neo-nav-link:hover {
+  background-color: rgba(128, 128, 128, 0.1);
+  opacity: 1;
+  transform: translateX(5px);
+}
+
+.neo-nav-link.active {
+    opacity: 1;
+    color: #2b2b2b !important;
+    background-color: #e0e5ec;
+    box-shadow: inset 5px 5px 10px #bec3c9, 
+                inset -5px -5px 10px #ffffff;
+}
+
+[data-theme="dark"] .neo-nav-link.active {
+    color: #ffffff !important;
+    background-color: #2b2b2b;
+    box-shadow: inset 5px 5px 10px rgba(0,0,0, 0.5), 
+                inset -2px -2px 5px rgba(255,255,255, 0.05);
+}
+
+/* UTILIS en general*/
+/* Tablas */
+.table-neo {
+  color: var(--text-color);
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text-color);
+  --bs-table-border-color: rgba(128, 128, 128, 0.15);
+}
+.table-neo thead th {
+  border-bottom: 2px solid rgba(128, 128, 128, 0.2);
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+/* Badges y Textos */
+.text-muted-dynamic { color: #888; }
+[data-theme="dark"] .text-muted-dynamic { color: #aaa; }
+
+.badge-neo {
+  background-color: rgba(0,0,0, 0.05);
+  color: var(--text-color);
+  border: 1px solid rgba(128,128,128, 0.2);
+}
+[data-theme="dark"] .badge-neo {
+  background-color: rgba(255,255,255, 0.1);
+  color: #fff;
+}
+
+.footer-neo {
+  background-color: rgba(0,0,0, 0.03);
+  border-top: 1px solid rgba(128,128,128, 0.1);
+}
+[data-theme="dark"] .footer-neo {
+  background-color: rgba(255,255,255, 0.05);
+}
+
+.alert-neo {
+  background-color: transparent;
+  border: 2px dashed rgba(128,128,128, 0.3);
+  color: var(--text-color);
+  opacity: 0.7;
 }

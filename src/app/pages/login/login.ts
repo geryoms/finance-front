@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { ThemeService } from '../../services/theme';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent {
   password = '';
   errorMessage = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private themeService: ThemeService) {}
 
   onLogin(): void {
     if (!this.email || !this.password) {
@@ -35,4 +36,7 @@ export class LoginComponent {
       }
     });
   }
+  toggleThemeTemp() {
+  this.themeService.toggleTheme();
+}
 }
